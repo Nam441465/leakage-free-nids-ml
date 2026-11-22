@@ -1,0 +1,26 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Python cache & build artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Raw datasets & large Parquet files (>100 MB GitHub file limit)
+# Note: metadata JSONs in data/processed/*.json ARE tracked.
+data/raw/
+data/processed/*.parquet
+
+# OS & IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
