@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leakage-Free NIDS ML — SOC &amp; Research Verification Console</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-badge">NIDS</div>
+      <div>
+        <h1>Leakage-Free NIDS Tabular ML Console</h1>
+        <p>Tái hiện chuẩn mực <code>arXiv:2611.04660v1</code> &amp; Kiểm chứng Cải tiến Phase 4 trực tiếp trên 279 mô hình đã đóng gói</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <span class="status-pill"><span class="dot"></span> 279 Bundles Ready • 69/69 Pytest</span>
+      <button id="themeToggle" class="btn btn-ghost" title="Chuyển giao diện Sáng/Tối">☀ Chế độ Sáng</button>
+    </div>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="overview">1. Tổng quan &amp; Đối chiếu Bài báo</button>
+    <button class="tab-btn" data-tab="live">2. Phát hiện Xâm nhập Live &amp; SOC Stream</button>
+    <button class="tab-btn" data-tab="noise">3. Phòng thí nghiệm Kháng nhiễu (Bảng 12)</button>
+    <button class="tab-btn" data-tab="lofo">4. Phòng thí nghiệm Zero-Day LOFO (Bảng 11)</button>
+    <button class="tab-btn" data-tab="audit">5. Cổng Kiểm chứng Toàn tập (Anti-Fake)</button>
+  </nav>
+
+  <main class="container">
+    <!-- ==================== TAB 1: OVERVIEW ==================== -->
+    <section id="tab-overview" class="tab-panel active">
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-label">CICIDS2017 (Khớp Bảng 2 — 0 dòng lệch)</div>
+          <div class="kpi-value" id="kpi-cic-rows">2,520,798</div>
+          <div class="kpi-sub">68 đặc trưng đầu vào (bỏ Dst Port) • 8 lớp</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">NF-UNSW-NB15-v2 (Khớp Bảng 3 — 0 dòng lệch)</div>
+          <div class="kpi-value" id="kpi-nf-rows">731,810</div>
+          <div class="kpi-sub">38 đặc trưng đầu vào (loại 69.4% trùng) • 10 lớp</div>
+        </div>
+        <div class="kpi-card accent-green">
+          <div class="kpi-label">Đột phá Kháng nhiễu Gaussian (σ = 0.5)</div>
+          <div class="kpi-value">96.11% <span class="kpi-delta">vs 0.67%</span></div>
+          <div class="kpi-sub">XGBoost Phase 4 vs Bài báo Bảng 12 (+95.44 pp)</div>
+        </div>
+        <div class="kpi-card accent-blue">
+          <div class="kpi-label">Đột phá Đa lớp &amp; Kho Mô hình Đóng gói</div>
+          <div class="kpi-value">95.38% <span class="kpi-delta">Macro-F1</span></div>
+          <div class="kpi-sub" id="kpi-bundles">279 files .joblib &amp; JSON • 69/69 tests passed</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Đối chiếu 3 Cột: Bài báo Gốc (2611.04660v1) vs. Tái tạo Baseline vs. Cải tiến Phase 4</h2>
+            <p class="muted">Mọi số liệu đọc trực tiếp từ <code>results/tables/*.json</code> (Mean ± SD qua 3 seeds độc lập <code>{0, 1, 2}</code>).</p>
+          </div>
+          <div class="control-row">
+            <select id="ov-dataset" class="select">
+              <option value="nf_unsw">NF-UNSW-NB15-v2 (10 lớp)</option>
+              <option value="cicids2017" selected>CICIDS2017 (8 lớp)</option>
+            </select>
+            <select id="ov-task" class="select">
+              <option value="binary">Phân loại Nhị phân (Binary — Bảng 5 &amp; 6)</option>
+              <option value="multiclass" selected>Phân loại Đa lớp (Multiclass — Bảng 8 &amp; 9)</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="ov-comp-table">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3 id="ov-chart-title">So sánh F1 từng lớp — Baseline vs. Phase 4 (XGBoost)</h3>
+              <p class="muted">Hover vào từng cột để xem độ chênh lệch chính xác theo từng họ tấn công.</p>
+            </div>
+          </div>
+          <div class="chart-box"><canvas id="ovPerClassChart"></canvas></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Thư viện 8 Biểu đồ Xuất bản (300 DPI)</h3>
+              <p class="muted">Bấm vào ảnh để phóng to xem chi tiết.</p>
+            </div>
+            <div class="control-row">
+              <button class="btn btn-sm active-pill" id="btn-fig-p4">Phase 4 Cải tiến (3)</button>
+              <button class="btn btn-sm" id="btn-fig-base">Bài báo Gốc (5)</button>
+            </div>
+          </div>
+          <div id="fig-gallery" class="fig-gallery"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 2: LIVE DETECTION & SOC STREAM ==================== -->
+    <section id="tab-live" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Phân tích Luồng Mạng Thật từ Tập Test (Suy luận Live từ <code>.joblib</code>)</h2>
+            <p class="muted">So sánh trực tiếp mô hình <strong>Baseline Bài báo</strong> (ngưỡng 0.5) và <strong>Phase 4 Cải tiến</strong> (12 tỷ số hành vi + hiệu chỉnh ngưỡng Validation) trên cùng một luồng mạng chưa từng thấy.</p>
+          </div>
+          <div class="control-row">
+            <select id="live-dataset" class="select">
+              <option value="cicids2017" selected>CICIDS2017</option>
+              <option value="nf_unsw">NF-UNSW-NB15-v2</option>
+            </select>
+            <select id="live-task" class="select">
+              <option value="multiclass" selected>Đa lớp (Multiclass)</option>
+              <option value="binary">Nhị phân (Binary)</option>
+            </select>
+            <select id="live-model" class="select">
+              <option value="xgboost" selected>XGBoost</option>
+              <option value="lightgbm">LightGBM</option>
+              <option value="random_forest">Random Forest</option>
+            </select>
+            <select id="live-class" class="select"></select>
+          </div>
+        </div>
+        <div class="action-bar">
+          <button id="btn-predict-one" class="btn btn-primary">⚡ Lấy luồng Test thật &amp; Dự đoán Live</button>
+          <button id="btn-predict-fixed" class="btn btn-success">🎯 Lấy ca Baseline ĐOÁN SAI → Phase 4 SỬA ĐÚNG</button>
+        </div>
+
+        <div id="single-result" class="single-result hidden">
+          <div class="gt-banner">
+            <div>
+              <span class="muted">Nhãn thật (Ground Truth — Tập Test Seed 0):</span>
+              <strong id="sr-gt" class="gt-badge"></strong>
+              <span class="muted" id="sr-rowid"></span>
+            </div>
+            <div id="sr-verdict" class="verdict-badge"></div>
+          </div>
+
+          <div class="grid-2">
+            <div class="model-panel" id="sr-base-card">
+              <div class="mp-head">
+                <h4>Baseline Bài báo (Ngưỡng 0.5)</h4>
+                <span class="latency-tag" id="sr-base-ms">0 ms</span>
+              </div>
+              <div class="pred-big" id="sr-base-pred">—</div>
+              <div class="prob-bars" id="sr-base-probs"></div>
+            </div>
+
+            <div class="model-panel highlight" id="sr-p4-card">
+              <div class="mp-head">
+                <h4>Phase 4 Cải tiến (<span id="sr-p4-variant">ratio_calibrated</span>)</h4>
+                <span class="latency-tag" id="sr-p4-ms">0 ms</span>
+              </div>
+              <div class="pred-big" id="sr-p4-pred">—</div>
+              <div class="prob-bars" id="sr-p4-probs"></div>
+            </div>
+          </div>
+
+          <div class="features-strip">
+            <h4>Đặc trưng luồng mạng thô (14 thuộc tính tiêu biểu — đã loại bỏ IP &amp; Destination Port)</h4>
+            <div id="sr-features" class="feature-chips"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- SOC Stream Replay -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Giả lập SOC Traffic Stream (Thời gian thực)</h3>
+              <p class="muted">Phát liên tục các luồng Test thật qua cả 2 mô hình và đếm cảnh báo sống.</p>
+            </div>
+            <div class="control-row">
+              <button id="btn-stream-toggle" class="btn btn-primary btn-sm">▶ Bắt đầu Stream</button>
+              <button id="btn-stream-reset" class="btn btn-ghost btn-sm">↺ Xóa log</button>
+            </div>
+          </div>
+          <div class="mini-kpis">
+            <div><span>Tổng luồng</span><strong id="st-total">0</strong></div>
+            <div><span>Tấn công thật</span><strong id="st-atk" class="text-danger">0</strong></div>
+            <div><span>Baseline đúng</span><strong id="st-base-acc">—</strong></div>
+            <div><span>Phase 4 đúng</span><strong id="st-p4-acc" class="text-success">—</strong></div>
+          </div>
+          <div class="table-scroll stream-scroll">
+            <table class="data-table compact">
+              <thead>
+                <tr>
+                  <th>Flow #</th>
+                  <th>Nhãn thật</th>
+                  <th>Baseline</th>
+                  <th>Phase 4</th>
+                  <th>Độ tin cậy</th>
+                </tr>
+              </thead>
+              <tbody id="stream-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- CSV Batch Upload -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Chấm điểm File CSV Luồng Mạng</h3>
+              <p class="muted">Tải file CSV mẫu (50 luồng Test thật) rồi tải lên lại để kiểm chứng suy luận theo lô.</p>
+            </div>
+            <a id="btn-dl-csv" class="btn btn-ghost btn-sm" href="/api/sample-csv/cicids2017" download>⬇ Tải CSV mẫu</a>
+          </div>
+          <div class="upload-box">
+            <input type="file" id="csv-file-input" accept=".csv" />
+            <button id="btn-upload-csv" class="btn btn-primary btn-sm">📤 Phân tích File CSV</button>
+          </div>
+          <div id="csv-summary" class="hidden">
+            <div class="mini-kpis" id="csv-kpis"></div>
+            <div class="table-scroll stream-scroll">
+              <table class="data-table compact">
+                <thead>
+                  <tr><th>#</th><th>Nhãn thật</th><th>Baseline</th><th>Phase 4</th></tr>
+                </thead>
+                <tbody id="csv-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 3: GAUSSIAN NOISE LAB ==================== -->
+    <section id="tab-noise" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Phòng thí nghiệm Kháng nhiễu Gaussian Trực tiếp (Tái hiện &amp; Khắc phục Bảng 12)</h2>
+            <p class="muted">Cộng trực tiếp nhiễu <code>N(0, σ²I)</code> lên đặc trưng chuẩn hóa của lô dữ liệu Test thật <code>CICIDS2017</code> và chấm sống song song Baseline vs. Phase 4.</p>
+          </div>
+        </div>
+
+        <div class="noise-controls">
+          <div class="slider-group">
+            <label for="noise-sigma">Độ lệch chuẩn nhiễu <strong>σ = <span id="noise-sigma-val">0.10</span></strong></label>
+            <input type="range" id="noise-sigma" min="0" max="0.5" step="0.05" value="0.10" />
+            <div class="preset-row">
+              <button class="btn btn-ghost btn-xs noise-preset" data-sigma="0">σ = 0.0 (Sạch)</button>
+              <button class="btn btn-ghost btn-xs noise-preset" data-sigma="0.1">σ = 0.1 (Nhẹ)</button>
+              <button class="btn btn-ghost btn-xs noise-preset" data-sigma="0.25">σ = 0.25 (Vừa)</button>
+              <button class="btn btn-ghost btn-xs noise-preset" data-sigma="0.5">σ = 0.5 (Nặng)</button>
+            </div>
+          </div>
+          <div class="control-row">
+            <select id="noise-model" class="select">
+              <option value="xgboost" selected>XGBoost (Baseline vs Noise-Robust)</option>
+              <option value="lightgbm">LightGBM (Baseline vs Noise-Robust)</option>
+              <option value="random_forest">Random Forest (Baseline vs Calibrated)</option>
+            </select>
+            <select id="noise-samples" class="select">
+              <option value="2000">2,000 luồng Test thật</option>
+              <option value="5000" selected>5,000 luồng Test thật</option>
+              <option value="10000">10,000 luồng Test thật</option>
+            </select>
+            <button id="btn-run-noise" class="btn btn-primary">🧪 Chạy Kiểm thử Nhiễu Live</button>
+          </div>
+        </div>
+
+        <div class="grid-2 noise-gauges">
+          <div class="gauge-card danger-border">
+            <div class="mp-head">
+              <h4>Baseline Bài báo (Bảng 12 — Ngưỡng 0.5)</h4>
+              <span class="latency-tag" id="ns-base-ms">—</span>
+            </div>
+            <div class="gauge-big text-danger" id="ns-base-f1">—</div>
+            <div class="gauge-label">Binary F1 (%) trực tiếp trên lô nhiễu</div>
+            <div class="mini-kpis" id="ns-base-details"></div>
+          </div>
+
+          <div class="gauge-card success-border">
+            <div class="mp-head">
+              <h4 id="ns-p4-title">Phase 4 Noise-Robust (Ngưỡng hiệu chỉnh Val)</h4>
+              <span class="latency-tag" id="ns-p4-ms">—</span>
+            </div>
+            <div class="gauge-big text-success" id="ns-p4-f1">—</div>
+            <div class="gauge-label">Binary F1 (%) trực tiếp trên CÙNG lô nhiễu</div>
+            <div class="mini-kpis" id="ns-p4-details"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Đường cong Độ bền vững Toàn cục (100,000 luồng Test × 3 Seeds — Bảng 12 vs. Phase 4)</h3>
+        <div class="chart-box tall"><canvas id="noiseFullChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 4: ZERO-DAY LOFO LAB ==================== -->
+    <section id="tab-lofo" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Phòng thí nghiệm Zero-Day: Leave-One-Attack-Family-Out (Bảng 11 vs. Phase 4 Hybrid)</h2>
+            <p class="muted">Nạp trực tiếp mô hình <code>saved_models/cicids2017/leave_one_out/&lt;họ&gt;/</code> (chưa từng thấy họ bị giấu lúc train) kết hợp bộ đo bất thường chỉ học trên <code>Benign</code> (<code>hybrid_detector.joblib</code>).</p>
+          </div>
+          <div class="control-row">
+            <select id="lofo-family" class="select">
+              <option value="DoS" selected>Giấu họ DoS (38,749 luồng test)</option>
+              <option value="Web">Giấu họ Web (428 luồng test)</option>
+              <option value="DDoS">Giấu họ DDoS (25,603 luồng test)</option>
+              <option value="PortScan">Giấu họ PortScan (18,139 luồng test)</option>
+              <option value="BruteForce">Giấu họ BruteForce (1,830 luồng test)</option>
+              <option value="Bot">Giấu họ Bot (390 luồng test)</option>
+            </select>
+            <select id="lofo-seed" class="select">
+              <option value="0" selected>Seed 0</option>
+              <option value="1">Seed 1</option>
+              <option value="2">Seed 2</option>
+            </select>
+            <button id="btn-run-lofo" class="btn btn-primary">🛡 Chạy Kiểm thử Zero-Day Live</button>
+          </div>
+        </div>
+
+        <div class="grid-2 noise-gauges">
+          <div class="gauge-card">
+            <div class="mp-head">
+              <h4>Baseline XGBoost (Bảng 11 — Ngưỡng 0.5)</h4>
+              <span class="latency-tag" id="lf-base-ms">—</span>
+            </div>
+            <div class="gauge-big" id="lf-base-rec">—</div>
+            <div class="gauge-label">Unseen Family Recall (%) — Chấm Live &amp; Full 504k Test</div>
+            <div class="mini-kpis" id="lf-base-details"></div>
+          </div>
+
+          <div class="gauge-card success-border">
+            <div class="mp-head">
+              <h4>Phase 4 Hybrid (XGBoost + Benign Anomaly)</h4>
+              <span class="latency-tag" id="lf-hyb-ms">—</span>
+            </div>
+            <div class="gauge-big text-success" id="lf-hyb-rec">—</div>
+            <div class="gauge-label">Unseen Family Recall (%) — Kiểm soát Benign FPR ≤ 0.25%</div>
+            <div class="mini-kpis" id="lf-hyb-details"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>So sánh Toàn bộ 6 Họ Tấn công Zero-Day (Mean ± SD qua 3 Seeds — 504,160 luồng Test/seed)</h3>
+        <div class="chart-box tall"><canvas id="lofoFullChart"></canvas></div>
+      </div>
+    </section>
+
+    <!-- ==================== TAB 5: ANTI-FAKE FULL TEST AUDITOR ==================== -->
+    <section id="tab-audit" class="tab-panel">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h2>Cổng Kiểm chứng Toàn tập (Anti-Fake Live Test Auditor)</h2>
+            <p class="muted">Gọi trực tiếp <code>src/experiments/demo_evaluate.py</code> để nạp mô hình <code>.joblib</code> thật và chấm lại toàn bộ <strong>146,362 luồng (NF-UNSW)</strong> hoặc <strong>504,160 luồng (CICIDS2017)</strong>, đối chiếu sai lệch từng chữ số với bảng CSV báo cáo.</p>
+          </div>
+        </div>
+
+        <div class="control-row audit-controls">
+          <select id="aud-dataset" class="select">
+            <option value="nf_unsw" selected>NF-UNSW-NB15-v2 (146,362 luồng Test — ~0.5s)</option>
+            <option value="cicids2017">CICIDS2017 (504,160 luồng Test — ~1.8s)</option>
+          </select>
+          <select id="aud-task" class="select">
+            <option value="binary" selected>Nhị phân (Binary)</option>
+            <option value="multiclass">Đa lớp (Multiclass)</option>
+          </select>
+          <select id="aud-model" class="select">
+            <option value="xgboost" selected>XGBoost</option>
+            <option value="lightgbm">LightGBM</option>
+            <option value="random_forest">Random Forest</option>
+          </select>
+          <select id="aud-seed" class="select">
+            <option value="0" selected>Seed 0</option>
+            <option value="1">Seed 1</option>
+            <option value="2">Seed 2</option>
+          </select>
+          <button id="btn-run-audit" class="btn btn-primary">🔍 Chấm Toàn bộ Tập Test Thật &amp; Đối chiếu CSV</button>
+        </div>
+
+        <div id="audit-result" class="hidden">
+          <div class="gt-banner" id="audit-banner"></div>
+          <div class="table-scroll">
+            <table class="data-table" id="audit-table">
+              <thead>
+                <tr>
+                  <th>Chỉ số (Metric)</th>
+                  <th>Kết quả chấm Live từ <code>.joblib</code></th>
+                  <th>Số báo cáo trong CSV</th>
+                  <th>Độ lệch tuyệt đối (<code>|Δ|</code>)</th>
+                  <th>Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Lightbox Modal for 300-DPI Figures -->
+  <div id="lightbox" class="lightbox hidden">
+    <div class="lightbox-inner">
+      <button id="lightbox-close" class="btn btn-ghost">✕ Đóng</button>
+      <h4 id="lightbox-title"></h4>
+      <img id="lightbox-img" src="" alt="Figure Preview" />
+    </div>
+  </div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

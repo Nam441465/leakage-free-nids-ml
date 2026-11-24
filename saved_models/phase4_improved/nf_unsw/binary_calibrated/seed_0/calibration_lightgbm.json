@@ -1,0 +1,14 @@
+{
+  "dataset": "nf_unsw",
+  "task": "binary",
+  "seed": 0,
+  "model": "lightgbm",
+  "method": "calibrated",
+  "calibration": {
+    "best_threshold": 0.9349999999999999,
+    "val_f1_at_0.5": 0.9191750278706801,
+    "val_f1_at_best": 0.9392409574152165,
+    "val_fpr_at_0.5": 0.010462523169601484,
+    "val_fpr_at_best": 0.00492354031510658
+  }
+}

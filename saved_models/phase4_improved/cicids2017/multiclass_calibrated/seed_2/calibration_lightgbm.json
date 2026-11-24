@@ -1,0 +1,23 @@
+{
+  "dataset": "cicids2017",
+  "task": "multiclass",
+  "seed": 2,
+  "model": "lightgbm",
+  "method": "calibrated",
+  "calibration": {
+    "gamma": [
+      20.0,
+      0.20235658223516173,
+      1.6475489724420658,
+      1.8205642030260805,
+      7.368062997280774,
+      3.3144540173399877,
+      1.0,
+      0.4970800511404606
+    ],
+    "val_macro_f1_before": 0.8349934635351046,
+    "val_macro_f1_after": 0.8709583323754972,
+    "val_weighted_f1_before": 0.996995785707179,
+    "val_weighted_f1_after": 0.9985282404109185
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "xgb_thresh": 0.11591534614560604,
+  "anom_thresh": 17.6801291847229,
+  "val_benign_fpr_baseline": 0.0012768161217724594,
+  "val_benign_fpr_hybrid": 0.0023531601795656917,
+  "val_seen_recall_baseline": 0.9993282504282404,
+  "val_seen_recall_hybrid": 0.9996305377355322
+}

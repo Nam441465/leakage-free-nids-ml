@@ -1,0 +1,23 @@
+{
+  "dataset": "cicids2017",
+  "task": "multiclass",
+  "seed": 1,
+  "model": "xgboost",
+  "method": "calibrated",
+  "calibration": {
+    "gamma": [
+      20.0,
+      0.05,
+      1.1050137103527577,
+      2.2230095692182843,
+      3.3144540173399877,
+      2.7144176165949068,
+      1.0,
+      14.82268898213896
+    ],
+    "val_macro_f1_before": 0.9439859655995291,
+    "val_macro_f1_after": 0.9604000585931273,
+    "val_weighted_f1_before": 0.9984755995385474,
+    "val_weighted_f1_after": 0.9989429517249877
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "dataset": "cicids2017",
+  "task": "binary",
+  "seed": 2,
+  "model": "lightgbm",
+  "method": "ratio_calibrated",
+  "tempered_alpha": 0.35,
+  "tempered_max_weight": 10.0,
+  "class_weights_train": {
+    "0": 0.8370650633370774,
+    "1": 1.4621003381032178
+  },
+  "calibration": {
+    "best_threshold": 0.6,
+    "val_f1_at_0.5": 0.9968067217043317,
+    "val_f1_at_best": 0.9970560638048322,
+    "val_fpr_at_0.5": 0.0010954366353150633,
+    "val_fpr_at_best": 0.0008639391328628605
+  }
+}

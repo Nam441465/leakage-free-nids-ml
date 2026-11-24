@@ -1,0 +1,21 @@
+{
+  "dataset": "cicids2017",
+  "task": "noise_robust",
+  "seed": 1,
+  "model": "xgboost_noise_robust",
+  "aug_ratio": 0.5,
+  "aug_sigmas": [
+    0.1,
+    0.25,
+    0.5
+  ],
+  "calibration": {
+    "best_threshold": 0.6917764325274361,
+    "min_thresh_for_clean_fpr": 0.11999567598104478,
+    "max_clean_fpr_cap": 0.0025,
+    "val_noisy_f1_at_0.5": 0.9842108036273586,
+    "val_noisy_f1_at_best": 0.9867491166077739,
+    "val_clean_f1_at_best": 0.9964450743488981,
+    "val_clean_fpr_at_best": 0.001262496688631086
+  }
+}

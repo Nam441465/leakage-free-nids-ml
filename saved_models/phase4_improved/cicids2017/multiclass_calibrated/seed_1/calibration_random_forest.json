@@ -1,0 +1,23 @@
+{
+  "dataset": "cicids2017",
+  "task": "multiclass",
+  "seed": 1,
+  "model": "random_forest",
+  "method": "calibrated",
+  "calibration": {
+    "gamma": [
+      0.7411344491069478,
+      0.44984061870307107,
+      1.8205642030260805,
+      1.0,
+      1.3492828476735637,
+      1.2210553000675683,
+      8.141810630738094,
+      1.6475489724420658
+    ],
+    "val_macro_f1_before": 0.8839144853933584,
+    "val_macro_f1_after": 0.9549265850352755,
+    "val_weighted_f1_before": 0.9986248246873841,
+    "val_weighted_f1_after": 0.9988164752662176
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "dataset": "nf_unsw",
+  "task": "binary",
+  "seed": 1,
+  "model": "xgboost",
+  "method": "ratio_calibrated",
+  "tempered_alpha": 0.35,
+  "tempered_max_weight": 10.0,
+  "class_weights_train": {
+    "0": 0.8006796501581274,
+    "1": 2.1467150227107687
+  },
+  "calibration": {
+    "best_threshold": 0.705,
+    "val_f1_at_0.5": 0.9248252741633047,
+    "val_f1_at_best": 0.9344223484848485,
+    "val_fpr_at_0.5": 0.008768246061167748,
+    "val_fpr_at_best": 0.0054448563484708066
+  }
+}

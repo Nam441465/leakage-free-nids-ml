@@ -1,0 +1,20 @@
+{
+  "dataset": "cicids2017",
+  "task": "binary",
+  "seed": 1,
+  "model": "xgboost",
+  "method": "ratio_calibrated",
+  "tempered_alpha": 0.35,
+  "tempered_max_weight": 10.0,
+  "class_weights_train": {
+    "0": 0.8370650633370774,
+    "1": 1.4621003381032178
+  },
+  "calibration": {
+    "best_threshold": 0.6749999999999999,
+    "val_f1_at_0.5": 0.9969296035438469,
+    "val_f1_at_best": 0.9970381057953419,
+    "val_fpr_at_0.5": 0.00105963805246163,
+    "val_fpr_at_best": 0.0008424599831508003
+  }
+}

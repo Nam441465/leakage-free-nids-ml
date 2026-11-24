@@ -1,0 +1,14 @@
+{
+  "dataset": "cicids2017",
+  "task": "binary",
+  "seed": 2,
+  "model": "random_forest",
+  "method": "calibrated",
+  "calibration": {
+    "best_threshold": 0.4549999999999999,
+    "val_f1_at_0.5": 0.9960362434157599,
+    "val_f1_at_best": 0.9962322174749988,
+    "val_fpr_at_0.5": 0.0007995016837266802,
+    "val_fpr_at_best": 0.0008782585660042337
+  }
+}

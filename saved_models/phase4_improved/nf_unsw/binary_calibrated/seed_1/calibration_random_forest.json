@@ -1,0 +1,14 @@
+{
+  "dataset": "nf_unsw",
+  "task": "binary",
+  "seed": 1,
+  "model": "random_forest",
+  "method": "calibrated",
+  "calibration": {
+    "best_threshold": 0.565,
+    "val_f1_at_0.5": 0.9313673239770237,
+    "val_f1_at_best": 0.9324283740765211,
+    "val_fpr_at_0.5": 0.0055969068582020385,
+    "val_fpr_at_best": 0.004612198795180723
+  }
+}

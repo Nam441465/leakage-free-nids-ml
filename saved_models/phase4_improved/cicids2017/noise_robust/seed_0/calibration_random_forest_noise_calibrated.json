@@ -1,0 +1,16 @@
+{
+  "dataset": "cicids2017",
+  "task": "noise_robust",
+  "seed": 0,
+  "model": "random_forest_noise_calibrated",
+  "source_baseline_model": "saved_models/cicids2017/binary",
+  "calibration": {
+    "best_threshold": 0.19949999660253528,
+    "min_thresh_for_clean_fpr": 0.15999999642372134,
+    "max_clean_fpr_cap": 0.0025,
+    "val_noisy_f1_at_0.5": 0.6818230977211278,
+    "val_noisy_f1_at_best": 0.9341711212487275,
+    "val_clean_f1_at_best": 0.994557942422914,
+    "val_clean_fpr_at_best": 0.0020381326504554775
+  }
+}
